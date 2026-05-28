@@ -1,56 +1,52 @@
-# Welcome to your Expo app 👋
+# Orynd Frontend
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Orynd is a 100% offline, cross-platform (Android-first) application functioning as a cognitive prosthetic designed for individuals managing ADHD or executive dysfunction. It transforms unstructured, chaotic streams of consciousness into organized, actionable outputs using localized AI.
 
-## Get started
+This repository (`orynd-frontend`) contains the React Native (Expo) user interface.
 
-1. Install dependencies
+## 🎯 Product Vision
+Orynd acts as an offline cognitive prosthetic. It offloads executive function entirely to the device, ensuring maximum privacy and zero cognitive friction. The core philosophy is simple: **You speak, the machine sorts.**
 
+## ✨ Core Features
+- **Zero-Friction Voice Capture:** A single, dominant "Hold to Speak" button that records audio.
+- **The Universal Vault:** A unified, visually muted inbox where parsed inputs are displayed automatically in their categorized state (Tasks, Events, Notes) without requiring user intervention.
+- **Air-Gapped Operation:** The application requires zero internet connection post-installation. All data remains isolated within the device's sandboxed storage.
+
+## 🎨 Design System
+Our interface is built on a "Sleep mode" philosophy—visually calming, heavily muted, and designed to prevent sensory overstimulation.
+
+- **Branding:** The logo consists purely of the word *Orynd* rendered in the Alqest font.
+- **Background Surfaces:** Deep, flat slate (`#121212`) for the background, with muted charcoal (`#1E1E1E`) for task cards.
+- **Typography:** Primary text is soft off-white (`#E0E0E0`), secondary text is dim gray (`#888888`). No harsh pure whites.
+- **Semantic Accents (Low Saturation):**
+  - **Tasks:** Soft Sage (`#7C9681`)
+  - **Events:** Muted Lavender (`#8A8696`)
+  - **Notes:** Dust Blue (`#6B7A8F`)
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v18+)
+- Android Studio (for emulator / physical device testing)
+- The [Orynd Core](https://github.com/ORYND/Orynd-core) engine must be linked.
+
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ORYND/Orynd-Frontend.git
+   cd Orynd-Frontend
+   ```
+2. Install dependencies (which will link the local `orynd-core` backend):
    ```bash
    npm install
    ```
-
-2. Start the app
-
+3. Prebuild the native Android project:
    ```bash
-   npx expo start
+   npx expo prebuild --clean -p android
+   ```
+4. Run locally on your device or emulator:
+   ```bash
+   npx expo run:android
    ```
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+*Note: Since the backend relies on heavy C++ ML bindings, standard "Expo Go" will not work. You must compile the native binary using `run:android`.*
