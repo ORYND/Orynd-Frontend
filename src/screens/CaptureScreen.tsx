@@ -1,26 +1,31 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, Pressable, Animated } from 'react-native';
-import { Audio } from 'expo-av';
+import { AudioModule, useAudioRecorder } from 'expo-audio';
 import { useStore } from '../store/useStore';
 import { MaterialIcons } from '@expo/vector-icons';
 
 export default function CaptureScreen({ onNext }: { onNext: () => void }) {
   const { processNewAudio, isProcessing } = useStore();
-  const [recording, setRecording] = useState<Audio.Recording | null>(null);
+  const recorder = useAudioRecorder();
+  const [isRecording, setIsRecording] = useState(false);
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
   const startRecording = async () => {
     try {
-      await Audio.requestPermissionsAsync();
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
-      });
+      const permission = await AudioModule.requestRecordingPermissionsAsync();
+      if (!permission.granted) {
+        console.error('Recording permission not granted');
+        return;
+      }
 
-      const { recording } = await Audio.Recording.createAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY
-      );
-      setRecording(recording);
+      await recorder.prepareToRecordAsync({
+        extension: '.m4a',
+        sampleRate: 44100,
+        numberOfChannels: 1,
+        bitRate: 128000,
+      });
+      await recorder.startAsync();
+      setIsRecording(true);
       
       Animated.loop(
         Animated.sequence([
@@ -35,15 +40,13 @@ export default function CaptureScreen({ onNext }: { onNext: () => void }) {
   };
 
   const stopRecording = async () => {
-    if (!recording) return;
+    if (!isRecording) return;
     pulseAnim.stopAnimation();
     pulseAnim.setValue(1);
+    setIsRecording(false);
     
     try {
-      await recording.stopAndUnloadAsync();
-      const uri = recording.getURI();
-      setRecording(null);
-      
+      const uri = await recorder.stopAsync();
       if (uri) {
         // Enforce 1000ms debounce implicitly using the processing flag
         await processNewAudio(uri);
@@ -58,7 +61,7 @@ export default function CaptureScreen({ onNext }: { onNext: () => void }) {
       <View style={styles.visualContainer}>
         <Animated.View style={[
           styles.micButton, 
-          recording ? { transform: [{ scale: pulseAnim }], backgroundColor: '#b2cdb6' } : {}
+          isRecording ? { transform: [{ scale: pulseAnim }], backgroundColor: '#b2cdb6' } : {}
         ]}>
           <Pressable
             onPressIn={startRecording}
@@ -70,7 +73,7 @@ export default function CaptureScreen({ onNext }: { onNext: () => void }) {
           </Pressable>
         </Animated.View>
         <Text style={styles.hintText}>
-          {isProcessing ? 'Processing...' : (recording ? 'Listening...' : 'Hold to Speak')}
+          {isProcessing ? 'Processing...' : (isRecording ? 'Listening...' : 'Hold to Speak')}
         </Text>
       </View>
 
